@@ -32,14 +32,14 @@ export function updateCart(update) {
 
 export function deleteItemFromCart(itemId) {
   return new Promise(async (resolve) => {
-    const response = await fetch('/cart/' + itemId, {
+    await fetch('/cart/' + itemId, {
       method: 'DELETE',
       headers: { 'content-type': 'application/json' },
     });
-    const data = await response.json();
     resolve({ data: { id: itemId } });
   });
 }
+
 
 export function resetCart() {
   // get all items of user's cart - and then delete each

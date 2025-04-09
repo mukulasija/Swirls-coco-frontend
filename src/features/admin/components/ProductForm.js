@@ -18,8 +18,7 @@ function ProductForm() {
     register,
     handleSubmit,
     setValue,
-    reset,
-    formState: { errors },
+    reset
   } = useForm();
   const categories = useSelector(selectCategories);
   const dispatch = useDispatch();

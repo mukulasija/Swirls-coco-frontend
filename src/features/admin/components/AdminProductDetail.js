@@ -1,21 +1,20 @@
-import { useState, useEffect } from 'react';
-import { StarIcon } from '@heroicons/react/20/solid';
-import { RadioGroup } from '@headlessui/react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { StarIcon } from "@heroicons/react/20/solid";
+import { RadioGroup } from "@headlessui/react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchProductByIdAsync,
   selectProductById,
   selectProductListStatus,
-} from '../../product/productSlice';
-import { useParams } from 'react-router-dom';
-import { addToCartAsync, selectItems } from '../../cart/cartSlice';
-import { selectLoggedInUser } from '../../auth/authSlice';
-import { toast } from 'react-toastify'; // ✅ New toastify import
-import 'react-toastify/dist/ReactToastify.css'; // ✅ Toastify styles
-import { Grid } from 'react-loader-spinner';
+} from "../../product/productSlice";
+import { useParams } from "react-router-dom";
+import { addToCartAsync, selectItems } from "../../cart/cartSlice";
+import { toast } from "react-toastify"; // ✅ New toastify import
+import "react-toastify/dist/ReactToastify.css"; // ✅ Toastify styles
+import { Grid } from "react-loader-spinner";
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function AdminProductDetail() {
@@ -41,9 +40,9 @@ export default function AdminProductDetail() {
         newItem.size = selectedSize;
       }
       dispatch(addToCartAsync(newItem));
-      toast.success('Item added to Cart');
+      toast.success("Item added to Cart");
     } else {
-      toast.error('Item already in Cart');
+      toast.error("Item already in Cart");
     }
   };
 
@@ -53,7 +52,7 @@ export default function AdminProductDetail() {
 
   return (
     <div className="bg-white">
-      {status === 'loading' ? (
+      {status === "loading" ? (
         <Grid
           height="80"
           width="80"
@@ -164,9 +163,9 @@ export default function AdminProductDetail() {
                         key={rating}
                         className={classNames(
                           product.rating > rating
-                            ? 'text-gray-900'
-                            : 'text-gray-200',
-                          'h-5 w-5 flex-shrink-0'
+                            ? "text-gray-900"
+                            : "text-gray-200",
+                          "h-5 w-5 flex-shrink-0"
                         )}
                         aria-hidden="true"
                       />
@@ -198,9 +197,9 @@ export default function AdminProductDetail() {
                             className={({ active, checked }) =>
                               classNames(
                                 color.selectedClass,
-                                active && checked ? 'ring ring-offset-1' : '',
-                                !active && checked ? 'ring-2' : '',
-                                'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none'
+                                active && checked ? "ring ring-offset-1" : "",
+                                !active && checked ? "ring-2" : "",
+                                "relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none"
                               )
                             }
                           >
@@ -211,7 +210,7 @@ export default function AdminProductDetail() {
                               aria-hidden="true"
                               className={classNames(
                                 color.class,
-                                'h-8 w-8 rounded-full border border-black border-opacity-10'
+                                "h-8 w-8 rounded-full border border-black border-opacity-10"
                               )}
                             />
                           </RadioGroup.Option>
@@ -228,12 +227,13 @@ export default function AdminProductDetail() {
                       <h3 className="text-sm font-medium text-gray-900">
                         Size
                       </h3>
-                      <a
-                        href="#"
+                      <button
+                        type="button"
+                        onClick={() => console.log("Size guide clicked")}
                         className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
                       >
                         Size guide
-                      </a>
+                      </button>
                     </div>
 
                     <RadioGroup
@@ -253,10 +253,10 @@ export default function AdminProductDetail() {
                             className={({ active }) =>
                               classNames(
                                 size.inStock
-                                  ? 'cursor-pointer bg-white text-gray-900 shadow-sm'
-                                  : 'cursor-not-allowed bg-gray-50 text-gray-200',
-                                active ? 'ring-2 ring-indigo-500' : '',
-                                'group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6'
+                                  ? "cursor-pointer bg-white text-gray-900 shadow-sm"
+                                  : "cursor-not-allowed bg-gray-50 text-gray-200",
+                                active ? "ring-2 ring-indigo-500" : "",
+                                "group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6"
                               )
                             }
                           >
@@ -268,11 +268,11 @@ export default function AdminProductDetail() {
                                 {size.inStock ? (
                                   <span
                                     className={classNames(
-                                      active ? 'border' : 'border-2',
+                                      active ? "border" : "border-2",
                                       checked
-                                        ? 'border-indigo-500'
-                                        : 'border-transparent',
-                                      'pointer-events-none absolute -inset-px rounded-md'
+                                        ? "border-indigo-500"
+                                        : "border-transparent",
+                                      "pointer-events-none absolute -inset-px rounded-md"
                                     )}
                                     aria-hidden="true"
                                   />
@@ -336,7 +336,6 @@ export default function AdminProductDetail() {
 
                   <div className="mt-4">
                     <ul
-                      role="list"
                       className="list-disc space-y-2 pl-4 text-sm"
                     >
                       {product.highlights.map((highlight) => (
@@ -353,9 +352,7 @@ export default function AdminProductDetail() {
                 <h2 className="text-sm font-medium text-gray-900">Details</h2>
 
                 <div className="mt-4 space-y-6">
-                  <p className="text-sm text-gray-600">
-                    {product.description}
-                  </p>
+                  <p className="text-sm text-gray-600">{product.description}</p>
                 </div>
               </div>
             </div>

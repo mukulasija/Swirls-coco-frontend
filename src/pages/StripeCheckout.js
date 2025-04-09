@@ -17,16 +17,20 @@ export default function StripeCheckout() {
   const currentOrder = useSelector(selectCurrentOrder)
 
   useEffect(() => {
-    // Create PaymentIntent as soon as the page loads
+    if (!currentOrder?.id || !currentOrder?.totalAmount) return;
+  
     fetch("/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ totalAmount: currentOrder.totalAmount, orderId:currentOrder.id }),
-    
+      body: JSON.stringify({
+        totalAmount: currentOrder.totalAmount,
+        orderId: currentOrder.id
+      }),
     })
       .then((res) => res.json())
       .then((data) => setClientSecret(data.clientSecret));
-  }, []);
+  }, [currentOrder.id, currentOrder.totalAmount]);
+  
 
   const appearance = {
     theme: 'stripe',
