@@ -29,22 +29,19 @@ import AdminHome from './pages/AdminHome';
 import AdminProductDetailPage from './pages/AdminProductDetailPage';
 import AdminProductFormPage from './pages/AdminProductFormPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
-import { positions, Provider } from 'react-alert';
-import AlertTemplate from 'react-alert-template-basic';
 import StripeCheckout from './pages/StripeCheckout';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 
-const options = {
-  timeout: 5000,
-  position: positions.BOTTOM_LEFT,
-};
+// ✅ Toastify imports
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
       <Protected>
-        <Home></Home>
+        <Home />
       </Protected>
     ),
   },
@@ -52,23 +49,23 @@ const router = createBrowserRouter([
     path: '/admin',
     element: (
       <ProtectedAdmin>
-        <AdminHome></AdminHome>
+        <AdminHome />
       </ProtectedAdmin>
     ),
   },
   {
     path: '/login',
-    element: <LoginPage></LoginPage>,
+    element: <LoginPage />,
   },
   {
     path: '/signup',
-    element: <SignupPage></SignupPage>,
+    element: <SignupPage />,
   },
   {
     path: '/cart',
     element: (
       <Protected>
-        <CartPage></CartPage>
+        <CartPage />
       </Protected>
     ),
   },
@@ -76,7 +73,7 @@ const router = createBrowserRouter([
     path: '/checkout',
     element: (
       <Protected>
-        <Checkout></Checkout>
+        <Checkout />
       </Protected>
     ),
   },
@@ -84,7 +81,7 @@ const router = createBrowserRouter([
     path: '/product-detail/:id',
     element: (
       <Protected>
-        <ProductDetailPage></ProductDetailPage>
+        <ProductDetailPage />
       </Protected>
     ),
   },
@@ -92,7 +89,7 @@ const router = createBrowserRouter([
     path: '/admin/product-detail/:id',
     element: (
       <ProtectedAdmin>
-        <AdminProductDetailPage></AdminProductDetailPage>
+        <AdminProductDetailPage />
       </ProtectedAdmin>
     ),
   },
@@ -100,7 +97,7 @@ const router = createBrowserRouter([
     path: '/admin/product-form',
     element: (
       <ProtectedAdmin>
-        <AdminProductFormPage></AdminProductFormPage>
+        <AdminProductFormPage />
       </ProtectedAdmin>
     ),
   },
@@ -108,7 +105,7 @@ const router = createBrowserRouter([
     path: '/admin/orders',
     element: (
       <ProtectedAdmin>
-        <AdminOrdersPage></AdminOrdersPage>
+        <AdminOrdersPage />
       </ProtectedAdmin>
     ),
   },
@@ -116,7 +113,7 @@ const router = createBrowserRouter([
     path: '/admin/product-form/edit/:id',
     element: (
       <ProtectedAdmin>
-        <AdminProductFormPage></AdminProductFormPage>
+        <AdminProductFormPage />
       </ProtectedAdmin>
     ),
   },
@@ -124,7 +121,7 @@ const router = createBrowserRouter([
     path: '/order-success/:id',
     element: (
       <Protected>
-        <OrderSuccessPage></OrderSuccessPage>{' '}
+        <OrderSuccessPage />
       </Protected>
     ),
   },
@@ -132,7 +129,7 @@ const router = createBrowserRouter([
     path: '/my-orders',
     element: (
       <Protected>
-        <UserOrdersPage></UserOrdersPage>{' '}
+        <UserOrdersPage />
       </Protected>
     ),
   },
@@ -140,7 +137,7 @@ const router = createBrowserRouter([
     path: '/profile',
     element: (
       <Protected>
-        <UserProfilePage></UserProfilePage>{' '}
+        <UserProfilePage />
       </Protected>
     ),
   },
@@ -148,25 +145,25 @@ const router = createBrowserRouter([
     path: '/stripe-checkout/',
     element: (
       <Protected>
-        <StripeCheckout></StripeCheckout>
+        <StripeCheckout />
       </Protected>
     ),
   },
   {
     path: '/logout',
-    element: <Logout></Logout>,
+    element: <Logout />,
   },
   {
     path: '/forgot-password',
-    element: <ForgotPasswordPage></ForgotPasswordPage>,
+    element: <ForgotPasswordPage />,
   },
   {
     path: '/reset-password',
-    element: <ResetPasswordPage></ResetPasswordPage>,
+    element: <ResetPasswordPage />,
   },
   {
     path: '*',
-    element: <PageNotFound></PageNotFound>,
+    element: <PageNotFound />,
   },
 ]);
 
@@ -182,22 +179,19 @@ function App() {
   useEffect(() => {
     if (user) {
       dispatch(fetchItemsByUserIdAsync());
-      // we can get req.user by token on backend so no need to give in front-end
       dispatch(fetchLoggedInUserAsync());
     }
   }, [dispatch, user]);
 
   return (
-    <>
-      <div className="App">
-        {userChecked && (
-          <Provider template={AlertTemplate} {...options}>
-            <RouterProvider router={router} />
-          </Provider>
-        )}
-        {/* Link must be inside the Provider */}
-      </div>
-    </>
+    <div className="App">
+      {userChecked && (
+        <>
+          <RouterProvider router={router} />
+          <ToastContainer position="bottom-left" autoClose={5000} />
+        </>
+      )}
+    </div>
   );
 }
 

@@ -10,14 +10,13 @@ import {
 import { useParams } from 'react-router-dom';
 import { addToCartAsync, selectItems } from '../../cart/cartSlice';
 import { selectLoggedInUser } from '../../auth/authSlice';
-import { useAlert } from 'react-alert';
+import { toast } from 'react-toastify'; // ✅ New toastify import
+import 'react-toastify/dist/ReactToastify.css'; // ✅ Toastify styles
 import { Grid } from 'react-loader-spinner';
-
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
-
 
 export default function AdminProductDetail() {
   const [selectedColor, setSelectedColor] = useState();
@@ -26,7 +25,6 @@ export default function AdminProductDetail() {
   const product = useSelector(selectProductById);
   const dispatch = useDispatch();
   const params = useParams();
-  const alert = useAlert();
   const status = useSelector(selectProductListStatus);
 
   const handleCart = (e) => {
@@ -43,9 +41,9 @@ export default function AdminProductDetail() {
         newItem.size = selectedSize;
       }
       dispatch(addToCartAsync(newItem));
-      alert.success('Item added to Cart');
+      toast.success('Item added to Cart');
     } else {
-      alert.error('Item Already added');
+      toast.error('Item already in Cart');
     }
   };
 
@@ -59,11 +57,9 @@ export default function AdminProductDetail() {
         <Grid
           height="80"
           width="80"
-          color="rgb(79, 70, 229) "
+          color="rgb(79, 70, 229)"
           ariaLabel="grid-loading"
           radius="12.5"
-          wrapperStyle={{}}
-          wrapperClass=""
           visible={true}
         />
       ) : null}
@@ -357,7 +353,9 @@ export default function AdminProductDetail() {
                 <h2 className="text-sm font-medium text-gray-900">Details</h2>
 
                 <div className="mt-4 space-y-6">
-                  <p className="text-sm text-gray-600">{product.description}</p>
+                  <p className="text-sm text-gray-600">
+                    {product.description}
+                  </p>
                 </div>
               </div>
             </div>
