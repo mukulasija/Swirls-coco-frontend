@@ -39,8 +39,7 @@ export default function AdminProductDetail() {
       if (selectedSize) {
         newItem.size = selectedSize;
       }
-      dispatch(addToCartAsync(newItem));
-      toast.success("Item added to Cart");
+      dispatch(addToCartAsync({ item: newItem, alert: toast }));
     } else {
       toast.error("Item already in Cart");
     }
