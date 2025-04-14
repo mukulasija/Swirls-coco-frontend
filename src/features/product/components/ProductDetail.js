@@ -38,7 +38,7 @@ export default function ProductDetail() {
       if (selectedSize) {
         newItem.size = selectedSize;
       }
-      dispatch(addToCartAsync({ item: newItem, toast }));
+      dispatch(addToCartAsync({ item: newItem, alert: toast }));
     } else {
       toast.error("Item Already added");
     }
