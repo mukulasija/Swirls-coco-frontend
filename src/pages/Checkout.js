@@ -8,7 +8,7 @@ import {
 import { Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { updateUserAsync } from "../features/user/userSlice";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   createOrderAsync,
   selectCurrentOrder,
@@ -31,16 +31,41 @@ function Checkout() {
   const status = useSelector(selectStatus);
   const currentOrder = useSelector(selectCurrentOrder);
 
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [shippingCharge, setShippingCharge] = useState(0);
+  const [finalAmount, setFinalAmount] = useState(0);
+  const [directPaymentOption, setDirectPaymentOption] = useState("");
+
   const totalAmount = items.reduce(
     (amount, item) => item.product.discountPrice * item.quantity + amount,
     0
   );
   const totalItems = items.reduce((total, item) => item.quantity + total, 0);
 
-  const [selectedAddress, setSelectedAddress] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState(null);
-  
-const [directPaymentOption, setDirectPaymentOption] = useState("");
+  useEffect(() => {
+    const newShippingCharge = paymentMethod === "cash" ? 50 : 0;
+    setShippingCharge(newShippingCharge);
+    setFinalAmount(totalAmount + newShippingCharge);
+  }, [paymentMethod, totalAmount]);
+
+  // Add loading state for user data
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Grid
+          height="80"
+          width="80"
+          color="rgb(79, 70, 229)"
+          ariaLabel="grid-loading"
+          radius="12.5"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+        />
+      </div>
+    );
+  }
 
   const handleQuantity = (e, item) => {
     dispatch(updateCartAsync({ id: item.id, quantity: +e.target.value }));
@@ -70,7 +95,7 @@ const [directPaymentOption, setDirectPaymentOption] = useState("");
   
     const order = {
       items,
-      totalAmount,
+      totalAmount: finalAmount,
       totalItems,
       user: user.id,
       paymentMethod,
@@ -331,7 +356,7 @@ const [directPaymentOption, setDirectPaymentOption] = useState("");
                   Choose from Existing addresses
                 </p>
                 <ul>
-                  {user.addresses.map((address, index) => (
+                  {user?.addresses?.map((address, index) => (
                     <li
                       key={index}
                       className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200"
@@ -527,9 +552,15 @@ const [directPaymentOption, setDirectPaymentOption] = useState("");
                     <p>Subtotal</p>
                     <p>Rs. {totalAmount}</p>
                   </div>
+                  {shippingCharge > 0 && (
+                    <div className="flex justify-between my-2 text-base font-medium text-gray-900">
+                      <p>Shipping Charge</p>
+                      <p>Rs. {shippingCharge}</p>
+                    </div>
+                  )}
                   <div className="flex justify-between my-2 text-base font-medium text-gray-900">
-                    <p>Total Items in Cart</p>
-                    <p>{totalItems} items</p>
+                    <p>Total Amount</p>
+                    <p>Rs. {finalAmount}</p>
                   </div>
                   <p className="mt-0.5 text-sm text-gray-500">
                     Shipping and taxes calculated at checkout.
