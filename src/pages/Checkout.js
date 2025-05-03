@@ -181,7 +181,7 @@ function Checkout() {
                               required: "name is required",
                             })}
                             id="name"
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-pink-600 sm:text-sm sm:leading-6"
                           />
                           {errors.name && (
                             <p className="text-red-500">
@@ -205,7 +205,7 @@ function Checkout() {
                               required: "email is required",
                             })}
                             type="email"
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-pink-600 sm:text-sm sm:leading-6"
                           />
                           {errors.email && (
                             <p className="text-red-500">
@@ -229,7 +229,7 @@ function Checkout() {
                               required: "phone is required",
                             })}
                             type="tel"
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-pink-600 sm:text-sm sm:leading-6"
                           />
                           {errors.phone && (
                             <p className="text-red-500">
@@ -253,7 +253,7 @@ function Checkout() {
                               required: "street is required",
                             })}
                             id="street"
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-pink-600 sm:text-sm sm:leading-6"
                           />
                           {errors.street && (
                             <p className="text-red-500">
@@ -278,7 +278,7 @@ function Checkout() {
                             })}
                             id="city"
                             autoComplete="address-level2"
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-pink-600 sm:text-sm sm:leading-6"
                           />
                           {errors.city && (
                             <p className="text-red-500">
@@ -303,7 +303,7 @@ function Checkout() {
                             })}
                             id="state"
                             autoComplete="address-level1"
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-pink-600 sm:text-sm sm:leading-6"
                           />
                           {errors.state && (
                             <p className="text-red-500">
@@ -327,7 +327,7 @@ function Checkout() {
                               required: "pinCode is required",
                             })}
                             id="pinCode"
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-pink-600 sm:text-sm sm:leading-6"
                           />
                           {errors.pinCode && (
                             <p className="text-red-500">
@@ -349,7 +349,7 @@ function Checkout() {
                     </button>
                     <button
                       type="submit"
-                      className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      className="rounded-md bg-pink-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-pink-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600"
                     >
                       Add Address
                     </button>
@@ -375,17 +375,20 @@ function Checkout() {
                           name="address"
                           type="radio"
                           value={index}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                          className="h-4 w-4 border-gray-300 text-pink-600 focus:ring-pink-600"
                         />
                         <div className="min-w-0 flex-auto">
                           <p className="text-sm font-semibold leading-6 text-gray-900">
                             {address.name}
                           </p>
-                          <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                          <p className="mt-1 text-xs leading-5 text-gray-500">
                             {address.street}
                           </p>
-                          <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                            {address.pinCode}
+                          <p className="mt-1 text-xs leading-5 text-gray-500">
+                            {address.city}, {address.state}
+                          </p>
+                          <p className="mt-1 text-xs leading-5 text-gray-500">
+                            PIN: {address.pinCode}
                           </p>
                         </div>
                       </div>
@@ -419,7 +422,7 @@ function Checkout() {
                           value="cash"
                           type="radio"
                           checked={paymentMethod === "cash"}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                          className="h-4 w-4 border-gray-300 text-pink-600 focus:ring-pink-600"
                         />
                         <label
                           htmlFor="cash"
@@ -438,7 +441,7 @@ function Checkout() {
                           value="payDirectly"
                           type="radio"
                           checked={paymentMethod === "payDirectly"}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                          className="h-4 w-4 border-gray-300 text-pink-600 focus:ring-pink-600"
                         />
                         <label
                           htmlFor="payDirectly"
@@ -460,7 +463,7 @@ function Checkout() {
                             <a
                               href="/ThePearledPointQr.jpg"
                               download="ThePearledPointQr.jpg"
-                              className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                              className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
                             >
                               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -508,8 +511,8 @@ function Checkout() {
                                 file:mr-4 file:py-2 file:px-4
                                 file:rounded-md file:border-0
                                 file:text-sm file:font-semibold
-                                file:bg-indigo-50 file:text-indigo-700
-                                hover:file:bg-indigo-100"
+                                file:bg-pink-50 file:text-pink-700
+                                hover:file:bg-pink-100"
                             />
                             {paymentScreenshot && (
                               <p className="mt-2 text-sm text-green-600">
@@ -579,7 +582,7 @@ function Checkout() {
                                 <button
                                   onClick={(e) => handleRemove(e, item.id)}
                                   type="button"
-                                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                                  className="font-medium text-pink-600 hover:text-pink-500"
                                 >
                                   Remove
                                 </button>
@@ -613,7 +616,7 @@ function Checkout() {
                   <div className="mt-6">
                     <div
                       onClick={handleOrder}
-                      className="flex cursor-pointer items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                      className="flex cursor-pointer items-center justify-center rounded-md border border-transparent bg-pink-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-pink-700"
                     >
                       Order Now
                     </div>
@@ -624,7 +627,7 @@ function Checkout() {
                       <Link to="/">
                         <button
                           type="button"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
+                          className="font-medium text-pink-600 hover:text-pink-500"
                         >
                           Continue Shopping
                           <span aria-hidden="true"> &rarr;</span>
