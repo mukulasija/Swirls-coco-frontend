@@ -9,7 +9,7 @@ import {
 } from '../../product/productSlice';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Modal from '../../common/Modal';
 import { toast } from 'react-toastify';
 
@@ -25,6 +25,12 @@ function ProductForm() {
   const params = useParams();
   const selectedProduct = useSelector(selectProductById);
   const [openModal, setOpenModal] = useState(null);
+  const [uploadedImages, setUploadedImages] = useState({
+    thumbnail: null,
+    image1: null,
+    image2: null,
+    image3: null
+  });
 
   const colors = [
     {
@@ -97,6 +103,32 @@ function ProductForm() {
     const product = { ...selectedProduct };
     product.deleted = true;
     dispatch(updateProductAsync(product));
+  };
+
+  const onDrop = useCallback((acceptedFiles, fieldName) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      // Create a preview URL for the image
+      const previewUrl = URL.createObjectURL(file);
+      setUploadedImages(prev => ({
+        ...prev,
+        [fieldName]: previewUrl
+      }));
+      // Set the form value to the preview URL
+      setValue(fieldName, previewUrl);
+    }
+  }, [setValue]);
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e, fieldName) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      onDrop(files, fieldName);
+    }
   };
 
   return (
@@ -304,16 +336,36 @@ function ProductForm() {
                 >
                   Thumbnail
                 </label>
-                <div className="mt-2">
-                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 ">
-                    <input
-                      type="text"
-                      {...register('thumbnail', {
-                        required: 'thumbnail is required',
-                      })}
-                      id="thumbnail"
-                      className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    />
+                <div 
+                  className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, 'thumbnail')}
+                >
+                  <div className="text-center">
+                    {uploadedImages.thumbnail ? (
+                      <img
+                        src={uploadedImages.thumbnail}
+                        alt="Thumbnail preview"
+                        className="mx-auto h-32 w-32 object-cover"
+                      />
+                    ) : (
+                      <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                        <label
+                          htmlFor="thumbnail-upload"
+                          className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                        >
+                          <span>Upload a file</span>
+                          <input
+                            id="thumbnail-upload"
+                            type="file"
+                            className="sr-only"
+                            onChange={(e) => onDrop(e.target.files, 'thumbnail')}
+                            accept="image/*"
+                          />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -325,16 +377,36 @@ function ProductForm() {
                 >
                   Image 1
                 </label>
-                <div className="mt-2">
-                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 ">
-                    <input
-                      type="text"
-                      {...register('image1', {
-                        required: 'image1 is required',
-                      })}
-                      id="image1"
-                      className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    />
+                <div 
+                  className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, 'image1')}
+                >
+                  <div className="text-center">
+                    {uploadedImages.image1 ? (
+                      <img
+                        src={uploadedImages.image1}
+                        alt="Image 1 preview"
+                        className="mx-auto h-32 w-32 object-cover"
+                      />
+                    ) : (
+                      <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                        <label
+                          htmlFor="image1-upload"
+                          className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                        >
+                          <span>Upload a file</span>
+                          <input
+                            id="image1-upload"
+                            type="file"
+                            className="sr-only"
+                            onChange={(e) => onDrop(e.target.files, 'image1')}
+                            accept="image/*"
+                          />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -346,37 +418,77 @@ function ProductForm() {
                 >
                   Image 2
                 </label>
-                <div className="mt-2">
-                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 ">
-                    <input
-                      type="text"
-                      {...register('image2', {
-                        required: 'image is required',
-                      })}
-                      id="image2"
-                      className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    />
+                <div 
+                  className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, 'image2')}
+                >
+                  <div className="text-center">
+                    {uploadedImages.image2 ? (
+                      <img
+                        src={uploadedImages.image2}
+                        alt="Image 2 preview"
+                        className="mx-auto h-32 w-32 object-cover"
+                      />
+                    ) : (
+                      <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                        <label
+                          htmlFor="image2-upload"
+                          className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                        >
+                          <span>Upload a file</span>
+                          <input
+                            id="image2-upload"
+                            type="file"
+                            className="sr-only"
+                            onChange={(e) => onDrop(e.target.files, 'image2')}
+                            accept="image/*"
+                          />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
               <div className="sm:col-span-6">
                 <label
-                  htmlFor="image2"
+                  htmlFor="image3"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Image 3
                 </label>
-                <div className="mt-2">
-                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 ">
-                    <input
-                      type="text"
-                      {...register('image3', {
-                        required: 'image is required',
-                      })}
-                      id="image3"
-                      className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    />
+                <div 
+                  className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, 'image3')}
+                >
+                  <div className="text-center">
+                    {uploadedImages.image3 ? (
+                      <img
+                        src={uploadedImages.image3}
+                        alt="Image 3 preview"
+                        className="mx-auto h-32 w-32 object-cover"
+                      />
+                    ) : (
+                      <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                        <label
+                          htmlFor="image3-upload"
+                          className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                        >
+                          <span>Upload a file</span>
+                          <input
+                            id="image3-upload"
+                            type="file"
+                            className="sr-only"
+                            onChange={(e) => onDrop(e.target.files, 'image3')}
+                            accept="image/*"
+                          />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
