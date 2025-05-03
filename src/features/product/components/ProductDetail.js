@@ -27,6 +27,14 @@ export default function ProductDetail() {
 
   const handleCart = (e) => {
     e.preventDefault();
+    console.log('Product data:', product);
+    
+    // Check if product is out of stock
+    if (product.stock <= 0) {
+      toast.error("This product is out of stock");
+      return;
+    }
+    
     if (items.findIndex((item) => item.product.id === product.id) < 0) {
       const newItem = {
         product: product.id,
@@ -343,9 +351,14 @@ export default function ProductDetail() {
                 <button
                   onClick={handleCart}
                   type="submit"
-                  className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  disabled={product.stock <= 0}
+                  className={`mt-10 flex w-full items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium text-white ${
+                    product.stock <= 0
+                      ? 'bg-gray-300 cursor-not-allowed'
+                      : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                  }`}
                 >
-                  Add to Cart
+                  {product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
                 </button>
               </form>
             </div>
