@@ -51,16 +51,26 @@ export default function ProductDetail() {
   return (
     <div className="bg-white">
       {status === "loading" ? (
-        <Grid
-          height="80"
-          width="80"
-          color="rgb(79, 70, 229) "
-          ariaLabel="grid-loading"
-          radius="12.5"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/95 backdrop-blur-sm">
+          <div className="flex flex-col items-center space-y-4">
+            <Grid
+              height="80"
+              width="80"
+              color="#EC4899"
+              ariaLabel="grid-loading"
+              radius="12.5"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+            <div className="text-xl font-semibold text-gray-900">
+              Loading Product...
+            </div>
+            <div className="text-sm text-gray-500">
+              Please wait while we fetch the product details
+            </div>
+          </div>
+        </div>
       ) : null}
       {product && (
         <div className="pt-6">
@@ -104,18 +114,24 @@ export default function ProductDetail() {
           {/* Image gallery */}
           <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:max-w-7xl lg:px-8">
             {/* Mobile horizontal scroll view */}
-            <div className="lg:hidden w-full overflow-x-auto pb-4 flex space-x-4 snap-x snap-mandatory scrollbar-hide">
-              {product.images.map((image, index) => (
-                <div key={index} className="snap-center shrink-0 first:pl-4 last:pr-4">
-                  <div className="w-80 h-80 overflow-hidden rounded-lg">
-                    <img
-                      src={image}
-                      alt={`${product.title} - Image ${index + 1}`}
-                      className="h-full w-full object-cover object-center"
-                    />
+            <div className="lg:hidden relative">
+              <div className="w-full overflow-x-auto pb-4 flex space-x-4 snap-x snap-mandatory scrollbar-hide">
+                {product.images.map((image, index) => (
+                  <div key={index} className="snap-center shrink-0 first:pl-4 last:pr-4 relative">
+                    <div className="w-80 h-80 overflow-hidden rounded-lg">
+                      {/* Numerical indicator */}
+                      <div className="absolute top-2 right-2 bg-white/80 text-gray-800 px-3 py-1 rounded-full text-sm font-medium shadow-md backdrop-blur-sm">
+                        {index + 1}/{product.images.length}
+                      </div>
+                      <img
+                        src={image}
+                        alt={`${product.title} - Image ${index + 1}`}
+                        className="h-full w-full object-cover object-center"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
             
             {/* Desktop grid layout */}
