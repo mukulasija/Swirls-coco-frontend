@@ -27,6 +27,14 @@ export default function ProductDetail() {
 
   const handleCart = (e) => {
     e.preventDefault();
+    console.log('Product data:', product);
+    
+    // Check if product is out of stock
+    if (product.stock <= 0) {
+      toast.error("This product is out of stock");
+      return;
+    }
+    
     if (items.findIndex((item) => item.product.id === product.id) < 0) {
       const newItem = {
         product: product.id,
@@ -38,7 +46,7 @@ export default function ProductDetail() {
       if (selectedSize) {
         newItem.size = selectedSize;
       }
-      dispatch(addToCartAsync({ item: newItem, toast }));
+      dispatch(addToCartAsync({ item: newItem, alert: toast }));
     } else {
       toast.error("Item Already added");
     }
@@ -51,16 +59,26 @@ export default function ProductDetail() {
   return (
     <div className="bg-white">
       {status === "loading" ? (
-        <Grid
-          height="80"
-          width="80"
-          color="rgb(79, 70, 229) "
-          ariaLabel="grid-loading"
-          radius="12.5"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/95 backdrop-blur-sm">
+          <div className="flex flex-col items-center space-y-4">
+            <Grid
+              height="80"
+              width="80"
+              color="#EC4899"
+              ariaLabel="grid-loading"
+              radius="12.5"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+            <div className="text-xl font-semibold text-gray-900">
+              Loading Product...
+            </div>
+            <div className="text-sm text-gray-500">
+              Please wait while we fetch the product details
+            </div>
+          </div>
+        </div>
       ) : null}
       {product && (
         <div className="pt-6">
@@ -102,36 +120,60 @@ export default function ProductDetail() {
           </nav>
 
           {/* Image gallery */}
-          <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
-            <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block">
-              <img
-                src={product.images[0]}
-                alt={product.title}
-                className="h-full w-full object-cover object-center"
-              />
+          <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:max-w-7xl lg:px-8">
+            {/* Mobile horizontal scroll view */}
+            <div className="lg:hidden relative">
+              <div className="w-full overflow-x-auto pb-4 flex space-x-4 snap-x snap-mandatory scrollbar-hide">
+                {product.images.map((image, index) => (
+                  <div key={index} className="snap-center shrink-0 first:pl-4 last:pr-4 relative">
+                    <div className="w-80 h-80 overflow-hidden rounded-lg">
+                      {/* Numerical indicator */}
+                      <div className="absolute top-2 right-2 bg-white/80 text-gray-800 px-3 py-1 rounded-full text-sm font-medium shadow-md backdrop-blur-sm">
+                        {index + 1}/{product.images.length}
+                      </div>
+                      <img
+                        src={image}
+                        alt={`${product.title} - Image ${index + 1}`}
+                        className="h-full w-full object-cover object-center"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="hidden lg:grid lg:grid-cols-1 lg:gap-y-8">
-              <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
+            
+            {/* Desktop grid layout */}
+            <div className="hidden lg:grid lg:grid-cols-3 lg:gap-x-8">
+              <div className="aspect-h-4 aspect-w-3 overflow-hidden rounded-lg">
                 <img
-                  src={product.images[1]}
+                  src={product.images[0]}
                   alt={product.title}
                   className="h-full w-full object-cover object-center"
                 />
               </div>
-              <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
+              <div className="grid grid-cols-1 gap-y-8">
+                <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
+                  <img
+                    src={product.images[1]}
+                    alt={product.title}
+                    className="h-full w-full object-cover object-center"
+                  />
+                </div>
+                <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
+                  <img
+                    src={product.images[2]}
+                    alt={product.title}
+                    className="h-full w-full object-cover object-center"
+                  />
+                </div>
+              </div>
+              <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 overflow-hidden rounded-lg">
                 <img
-                  src={product.images[2]}
+                  src={product.images[3]}
                   alt={product.title}
                   className="h-full w-full object-cover object-center"
                 />
               </div>
-            </div>
-            <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 sm:overflow-hidden sm:rounded-lg">
-              <img
-                src={product.images[3]}
-                alt={product.title}
-                className="h-full w-full object-cover object-center"
-              />
             </div>
           </div>
 
@@ -309,9 +351,14 @@ export default function ProductDetail() {
                 <button
                   onClick={handleCart}
                   type="submit"
-                  className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  disabled={product.stock <= 0}
+                  className={`mt-10 flex w-full items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium text-white ${
+                    product.stock <= 0
+                      ? 'bg-gray-300 cursor-not-allowed'
+                      : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                  }`}
                 >
-                  Add to Cart
+                  {product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
                 </button>
               </form>
             </div>

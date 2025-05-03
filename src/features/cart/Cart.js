@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   deleteItemFromCartAsync,
@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import { Grid } from 'react-loader-spinner';
 import Modal from '../common/Modal';
+import { toast } from 'react-toastify';
 
 export default function Cart() {
   const dispatch = useDispatch();
@@ -19,6 +20,40 @@ export default function Cart() {
   const status = useSelector(selectCartStatus);
   const cartLoaded = useSelector(selectCartLoaded)
   const [openModal, setOpenModal] = useState(null);
+  const [stockIssues, setStockIssues] = useState([]);
+
+  useEffect(() => {
+    // Validate stock levels when cart items load
+    if (items.length > 0) {
+      const issues = [];
+      
+      items.forEach(item => {
+        if (item.product.stock === 0) {
+          issues.push({ id: item.id, message: `${item.product.title} is out of stock`, severity: 'error' });
+        } else if (item.quantity > item.product.stock) {
+          issues.push({ 
+            id: item.id, 
+            message: `Only ${item.product.stock} units of ${item.product.title} available`, 
+            severity: 'warning' 
+          });
+          
+          // Auto-adjust quantity to available stock
+          dispatch(updateCartAsync({id: item.id, quantity: item.product.stock}));
+        }
+      });
+      
+      setStockIssues(issues);
+      
+      // Show toast notifications for stock issues
+      issues.forEach(issue => {
+        if (issue.severity === 'error') {
+          toast.error(issue.message);
+        } else {
+          toast.warning(issue.message);
+        }
+      });
+    }
+  }, [items, dispatch]);
 
   const totalAmount = items.reduce(
     (amount, item) => item.product.discountPrice * item.quantity + amount,
@@ -27,12 +62,23 @@ export default function Cart() {
   const totalItems = items.reduce((total, item) => item.quantity + total, 0);
 
   const handleQuantity = (e, item) => {
-    dispatch(updateCartAsync({id:item.id, quantity: +e.target.value }));
+    const newQuantity = +e.target.value;
+    
+    // Check if the new quantity exceeds available stock
+    if (newQuantity > item.product.stock) {
+      toast.error(`Only ${item.product.stock} items available in stock`);
+      return;
+    }
+    
+    dispatch(updateCartAsync({id:item.id, quantity: newQuantity}));
   };
 
   const handleRemove = (e, id) => {
     dispatch(deleteItemFromCartAsync(id));
   };
+
+  // Check if any items have stock issues that would prevent checkout
+  const hasStockIssues = stockIssues.some(issue => issue.severity === 'error');
 
   return (
     <>
@@ -58,7 +104,12 @@ export default function Cart() {
                 />
               ) : null}
               <ul className="-my-6 divide-y divide-gray-200">
-                {items.map((item) => (
+                {items.map((item) => {
+                  // Check if this item has stock issues
+                  const stockIssue = stockIssues.find(issue => issue.id === item.id);
+                  const isOutOfStock = item.product.stock === 0;
+                  
+                  return (
                   <li key={item.id} className="flex py-6">
                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                       <img
@@ -76,6 +127,11 @@ export default function Cart() {
                           </h3>
                           <p className="ml-4">Rs. {item.product.discountPrice}</p>
                         </div>
+                        {stockIssue && (
+                          <p className={`mt-1 text-sm ${stockIssue.severity === 'error' ? 'text-red-500' : 'text-orange-500'}`}>
+                            {stockIssue.message}
+                          </p>
+                        )}
                       </div>
                       <div className="flex flex-1 items-end justify-between text-sm">
                         <div className="text-gray-500">
@@ -88,12 +144,14 @@ export default function Cart() {
                           <select
                             onChange={(e) => handleQuantity(e, item)}
                             value={item.quantity}
+                            disabled={isOutOfStock}
+                            className={isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}
                           >
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                            {[...Array(Math.min(5, item.product.stock || 1)).keys()].map(num => (
+                              <option key={num + 1} value={num + 1}>
+                                {num + 1}
+                              </option>
+                            ))}
                           </select>
                         </div>
 
@@ -118,7 +176,7 @@ export default function Cart() {
                       </div>
                     </div>
                   </li>
-                ))}
+                )})}
               </ul>
             </div>
           </div>
@@ -135,10 +193,27 @@ export default function Cart() {
             <p className="mt-0.5 text-sm text-gray-500">
               Shipping and taxes calculated at checkout.
             </p>
+            {hasStockIssues && (
+              <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-sm text-red-600">
+                  Some items in your cart are out of stock. Please remove them before proceeding to checkout.
+                </p>
+              </div>
+            )}
             <div className="mt-6">
               <Link
                 to="/checkout"
-                className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                className={`flex items-center justify-center rounded-md border border-transparent ${
+                  hasStockIssues 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-indigo-600 hover:bg-indigo-700'
+                } px-6 py-3 text-base font-medium text-white shadow-sm`}
+                onClick={(e) => {
+                  if (hasStockIssues) {
+                    e.preventDefault();
+                    toast.error('Please resolve stock issues before checkout');
+                  }
+                }}
               >
                 Checkout
               </Link>
