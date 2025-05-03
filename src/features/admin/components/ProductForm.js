@@ -108,10 +108,10 @@ function ProductForm() {
         onSubmit={handleSubmit((data) => {
           const product = { ...data };
           product.images = [
+            product.thumbnail,
             product.image1,
             product.image2,
             product.image3,
-            product.thumbnail,
           ];
           product.highlights = [
             product.highlight1,

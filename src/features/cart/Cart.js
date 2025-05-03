@@ -7,7 +7,7 @@ import {
   selectItems,
   updateCartAsync,
 } from './cartSlice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import { Grid } from 'react-loader-spinner';
 import Modal from '../common/Modal';
@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 
 export default function Cart() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const items = useSelector(selectItems);
   const status = useSelector(selectCartStatus);
@@ -84,26 +85,36 @@ export default function Cart() {
     <>
       {!items.length && cartLoaded && <Navigate to="/" replace={true}></Navigate>}
 
-      <div>
-        <div className="mx-auto mt-12 bg-white max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-pink-50">
+        <div className="mx-auto mt-6 sm:mt-12 bg-white max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
           <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
             <h1 className="text-4xl my-5 font-bold tracking-tight text-gray-900">
               Cart
             </h1>
             <div className="flow-root">
               {status === 'loading' ? (
-                <Grid
-                  height="80"
-                  width="80"
-                  color="rgb(79, 70, 229) "
-                  ariaLabel="grid-loading"
-                  radius="12.5"
-                  wrapperStyle={{}}
-                  wrapperClass=""
-                  visible={true}
-                />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-pink-100 backdrop-blur-sm">
+                  <div className="flex flex-col items-center space-y-4">
+                    <Grid
+                      height="80"
+                      width="80"
+                      color="#EC4899"
+                      ariaLabel="grid-loading"
+                      radius="12.5"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                      visible={true}
+                    />
+                    <div className="text-xl font-semibold text-pink-900">
+                      Loading Cart...
+                    </div>
+                    <div className="text-sm text-pink-500">
+                      Please wait while we fetch your cart items
+                    </div>
+                  </div>
+                </div>
               ) : null}
-              <ul className="-my-6 divide-y divide-gray-200">
+              <ul className="space-y-4 sm:space-y-6">
                 {items.map((item) => {
                   // Check if this item has stock issues
                   const stockIssue = stockIssues.find(issue => issue.id === item.id);
@@ -111,7 +122,7 @@ export default function Cart() {
                   
                   return (
                   <li key={item.id} className="flex py-6">
-                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                    <div className="h-32 w-32 sm:h-40 sm:w-40 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 shadow-sm">
                       <img
                         src={item.product.thumbnail}
                         alt={item.product.title}
@@ -119,25 +130,35 @@ export default function Cart() {
                       />
                     </div>
 
-                    <div className="ml-4 flex flex-1 flex-col">
+                    <div className="ml-4 sm:ml-6 flex flex-1 flex-col">
                       <div>
-                        <div className="flex justify-between text-base font-medium text-gray-900">
-                          <h3>
-                            <a href={item.product.id}>{item.product.title}</a>
-                          </h3>
-                          <p className="ml-4">Rs. {item.product.discountPrice}</p>
+                        <div className="flex flex-col">
+                          <div className="flex justify-between items-center">
+                            <h3 className="text-sm sm:text-base text-gray-700 font-medium">
+                              <a href={item.product.id}>{item.product.title}</a>
+                            </h3>
+                          </div>
+                          <div className="mt-1 flex flex-wrap items-center text-sm text-gray-500">
+                            <span className="mr-1">Rs. {item.product.discountPrice}</span>
+                            <span className="mx-1">×</span>
+                            <span className="mx-1">{item.quantity}</span>
+                            <span className="mx-1">=</span>
+                            <span className="font-medium text-pink-900">Rs. {item.product.discountPrice * item.quantity}</span>
+                          </div>
                         </div>
                         {stockIssue && (
-                          <p className={`mt-1 text-sm ${stockIssue.severity === 'error' ? 'text-red-500' : 'text-orange-500'}`}>
-                            {stockIssue.message}
-                          </p>
+                          <div className="mt-2 px-3 py-2 rounded-md">
+                            <p className={`text-sm ${stockIssue.severity === 'error' ? 'text-pink-700 bg-pink-50' : 'text-pink-600 bg-pink-50'}`}>
+                              {stockIssue.message}
+                            </p>
+                          </div>
                         )}
                       </div>
                       <div className="flex flex-1 items-end justify-between text-sm">
-                        <div className="text-gray-500">
+                        <div className="flex items-center space-x-4">
                           <label
                             htmlFor="quantity"
-                            className="inline mr-5 text-sm font-medium leading-6 text-gray-900"
+                            className="text-sm font-medium text-gray-900"
                           >
                             Qty
                           </label>
@@ -145,7 +166,10 @@ export default function Cart() {
                             onChange={(e) => handleQuantity(e, item)}
                             value={item.quantity}
                             disabled={isOutOfStock}
-                            className={isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}
+                            className={`
+                              rounded-md border-pink-300 py-1 px-2 text-sm sm:text-base
+                              ${isOutOfStock ? 'bg-pink-50 cursor-not-allowed' : 'bg-white'}
+                            `}
                           >
                             {[...Array(Math.min(5, item.product.stock || 1)).keys()].map(num => (
                               <option key={num + 1} value={num + 1}>
@@ -155,20 +179,20 @@ export default function Cart() {
                           </select>
                         </div>
 
-                        <div className="flex">
+                        <div className="flex items-center space-x-4">
                           <Modal
                             title={`Delete ${item.product.title}`}
-                            message="Are you sure you want to delete this Cart item ?"
+                            message="Are you sure you want to delete this Cart item?"
                             dangerOption="Delete"
                             cancelOption="Cancel"
                             dangerAction={(e) => handleRemove(e, item.id)}
-                            cancelAction={()=>setOpenModal(null)}
+                            cancelAction={() => setOpenModal(null)}
                             showModal={openModal === item.id}
-                          ></Modal>
+                          />
                           <button
-                            onClick={e=>{setOpenModal(item.id)}}
+                            onClick={(e) => setOpenModal(item.id)}
                             type="button"
-                            className="font-medium text-indigo-600 hover:text-indigo-500"
+                            className="text-sm sm:text-base font-medium text-pink-600 hover:text-pink-500"
                           >
                             Remove
                           </button>
@@ -181,12 +205,12 @@ export default function Cart() {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-            <div className="flex justify-between my-2 text-base font-medium text-gray-900">
+          <div className="border-t border-pink-200 bg-pink-50 px-4 py-6 sm:px-6 lg:px-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center my-2 text-lg font-medium text-pink-900">
               <p>Subtotal</p>
               <p>Rs. {totalAmount}</p>
             </div>
-            <div className="flex justify-between my-2 text-base font-medium text-gray-900">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center my-2 text-lg font-medium text-pink-900">
               <p>Total Items in Cart</p>
               <p>{totalItems} items</p>
             </div>
@@ -201,30 +225,23 @@ export default function Cart() {
               </div>
             )}
             <div className="mt-6">
-              <Link
-                to="/checkout"
-                className={`flex items-center justify-center rounded-md border border-transparent ${
-                  hasStockIssues 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-indigo-600 hover:bg-indigo-700'
-                } px-6 py-3 text-base font-medium text-white shadow-sm`}
-                onClick={(e) => {
-                  if (hasStockIssues) {
-                    e.preventDefault();
-                    toast.error('Please resolve stock issues before checkout');
-                  }
-                }}
+              <button
+                type="button"
+                className="mt-6 w-full sm:w-auto px-6 py-3 text-base font-medium text-white bg-pink-600 rounded-md shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+                onClick={() => navigate('/checkout')}
+                disabled={hasStockIssues}
               >
-                Checkout
-              </Link>
+                {hasStockIssues ? 'Resolve Stock Issues' : 'Proceed to Checkout'}
+              </button>
             </div>
-            <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
+            <div className="mt-6 flex flex-col sm:flex-row justify-center items-center text-center text-sm text-gray-500 space-y-2 sm:space-y-0">
               <p>
                 or
+                <br></br>
                 <Link to="/">
                   <button
                     type="button"
-                    className="font-medium text-indigo-600 hover:text-indigo-500"
+                    className="font-medium text-pink-600 hover:text-pink-500"
                   >
                     Continue Shopping
                     <span aria-hidden="true"> &rarr;</span>
