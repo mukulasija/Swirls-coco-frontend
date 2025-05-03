@@ -68,6 +68,7 @@ function ProductForm() {
 
   useEffect(() => {
     if (selectedProduct && params.id) {
+      console.log(selectedProduct);
       setValue('title', selectedProduct.title);
       setValue('description', selectedProduct.description);
       setValue('price', selectedProduct.price);
@@ -82,6 +83,7 @@ function ProductForm() {
       setValue('highlight2', selectedProduct.highlights[1]);
       setValue('highlight3', selectedProduct.highlights[2]);
       setValue('highlight4', selectedProduct.highlights[3]);
+      setValue('rating', selectedProduct.rating);
       setValue(
         'sizes',
         selectedProduct.sizes.map((size) => size.id)
@@ -117,7 +119,6 @@ function ProductForm() {
             product.highlight3,
             product.highlight4,
           ];
-          product.rating = 0;
           if (product.colors) {
             product.colors = product.colors.map((color) =>
               colors.find((clr) => clr.id === color)
@@ -137,7 +138,6 @@ function ProductForm() {
           product.discountPercentage = +product.discountPercentage;
           if (params.id) {
             product.id = params.id;
-            product.rating = selectedProduct.rating || 0;
             dispatch(updateProductAsync(product));
             toast.success('Product Updated');
 
@@ -398,6 +398,35 @@ function ProductForm() {
                     />
                   </div>
                 </div>
+              </div>
+
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="rating"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Rating
+                </label>
+                <div className="mt-2">
+                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                    <input
+                      type="number"
+                      min="0"
+                      max="5"
+                      step="0.1"
+                      {...register('rating', {
+                        required: 'rating is required',
+                        min: 0,
+                        max: 5,
+                      })}
+                      id="rating"
+                      className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+                <p className="mt-1 text-sm text-gray-500">
+                  Enter a rating between 0 and 5 (with decimal places)
+                </p>
               </div>
               <div className="sm:col-span-6">
                 <label
